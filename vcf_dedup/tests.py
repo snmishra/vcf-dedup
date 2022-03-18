@@ -81,13 +81,13 @@ class VcfDedupTests(unittest.TestCase):
             "temp_folder": ""
         }
         try:
-            print 1
+            print(1)
             vcf_dedup_runner = VcfDedupRunner(config)
-            print 2
+            print(2)
             vcf_dedup_runner.run()
-            print 3
+            print(3)
             self.assertTrue(False)
-            print 4
+            print(4)
         except:
             self.assertTrue(True)
 
@@ -234,6 +234,6 @@ class VcfDedupTests(unittest.TestCase):
             vcf_dedup_runner = VcfDedupRunner(config)
             vcf_dedup_runner.run()
             self.assertTrue(True)
-        except ValueError, ex:
-            print ex
+        except ValueError as ex:
+            print(ex)
             self.assertTrue(False)
