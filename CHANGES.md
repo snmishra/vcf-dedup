@@ -1,3 +1,9 @@
+version 0.5.0 (18 March 2022)
+----------------------------
+
+* Major changes
+    - Switch to Python 3 and PyVCF3
+    
 version 0.4.6 (30 November 2017)
 ----------------------------
 
