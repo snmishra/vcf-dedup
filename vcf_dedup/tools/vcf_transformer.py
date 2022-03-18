@@ -5,7 +5,6 @@ import logging
 from abc import ABCMeta, abstractmethod
 import time
 import sys
-from collections import OrderedDict
 from vcf_dedup import constants
 
 
@@ -334,33 +333,33 @@ class AbstractVcfDedupper(AbstractVcfTransformer):
         :param variants:
         :return:
         """
-        allele_calls = OrderedDict()
-        for variant in variants:
-            allele_calls[variant] = self._calculate_allele_calls(variant)
+        allele_calls = {}
+        for idx, variant in enumerate(variants):
+            allele_calls[idx] = self._calculate_allele_calls(variant)
         max_ac = allele_calls[max(allele_calls, key=allele_calls.get)]
         max_acs = [i for i, x in allele_calls.items() if x == max_ac]
         if len(max_acs) > 1:
             # collision with maximum allele call
-            afs = OrderedDict()
-            for variant in variants:
-                afs[variant] = self._calculate_AF(variant)
+            afs = {}
+            for idx,variant in enumerate(variants):
+                afs[idx] = self._calculate_AF(variant)
             max_af = afs[max(afs, key=afs.get)]
             max_afs = [i for i, x in afs.items() if x == max_af]
             if len(max_afs) > 1:
                 # collision with maximum AF
-                qualities = OrderedDict()
-                for variant in variants:
-                    qualities[variant] = self._get_variant_calling_quality(variant)
+                qualities = {}
+                for idx, variant in enumerate(variants):
+                    qualities[idx] = self._get_variant_calling_quality(variant)
                 max_qual = qualities[max(qualities, key=qualities.get)]
                 max_quals = [i for i, x in qualities.items() if x == max_qual]
                 # returns highest quality
-                merged_variant = max_quals[0]
+                merged_variant = variants[max_quals[0]]
             else:
                 # returns highest AFs
-                merged_variant = max_afs[0]
+                merged_variant = variants[max_afs[0]]
         else:
             # returns highest allele calls
-            merged_variant = max_acs[0]
+            merged_variant = variants[max_acs[0]]
 
         return merged_variant
 
@@ -372,22 +371,22 @@ class AbstractVcfDedupper(AbstractVcfTransformer):
         :param variants:
         :return:
         """
-        allele_frequencies = OrderedDict()
-        for variant in variants:
-            allele_frequencies[variant] = self._calculate_AF(variant)
+        allele_frequencies = {}
+        for idx, variant in enumerate(variants):
+            allele_frequencies[idx] = self._calculate_AF(variant)
         max_af = allele_frequencies[max(allele_frequencies, key=allele_frequencies.get)]
         max_afs = [i for i, x in allele_frequencies.items() if x == max_af]
         if len(max_afs) > 1:
             # collision with maximum AF
-            qualities = OrderedDict()
-            for variant in variants:
-                qualities[variant] = self._get_variant_calling_quality(variant)
+            qualities = {}
+            for idx, variant in enumerate(variants):
+                qualities[idx] = self._get_variant_calling_quality(variant)
             max_qual = qualities[max(qualities, key=qualities.get)]
             max_quals = [i for i, x in qualities.items() if x == max_qual]
             # gets the first
-            merged_variant = max_quals[0]
+            merged_variant = variants[max_quals[0]]
         else:
-            merged_variant = max_afs[0]
+            merged_variant = variants[max_afs[0]]
 
         return merged_variant
 
@@ -398,24 +397,24 @@ class AbstractVcfDedupper(AbstractVcfTransformer):
         :param variants:
         :return:
         """
-        qualities = OrderedDict()
-        for variant in variants:
-            qualities[variant] = self._get_variant_calling_quality(variant)
+        qualities = {}
+        for idx, variant in enumerate(variants):
+            qualities[idx] = self._get_variant_calling_quality(variant)
         max_qual = qualities[max(qualities, key=qualities.get)]
         max_quals = [i for i, x in qualities.items() if x == max_qual]
         if len(max_quals) > 1:
             # collision with maximum AF
-            allele_frequencies = OrderedDict()
-            for variant in variants:
-                allele_frequencies[variant] = self._calculate_AF(variant)
+            allele_frequencies = {}
+            for idx, variant in enumerate(variants):
+                allele_frequencies[idx] = self._calculate_AF(variant)
             max_af = allele_frequencies[
                 max(allele_frequencies, key=allele_frequencies.get)
             ]
             max_afs = [i for i, x in allele_frequencies.items() if x == max_af]
             # gets the first
-            merged_variant = max_afs[0]
+            merged_variant = variants[max_afs[0]]
         else:
-            merged_variant = max_quals[0]
+            merged_variant = variants[max_quals[0]]
         return merged_variant
 
     def _select_mode_arbitrary(self, variants):

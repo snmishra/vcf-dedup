@@ -70,7 +70,7 @@ class VcfSorter(object):
         """
         sort_command = (
             "({0} '#' {1} && {0} -v '#' {1} | sort {2} {3} {4} -k1,1V -k2,2n -k4,4V -k5,5V)"
-            " | bgzip > {5}"
+            " | gzip > {5}"
         ).format(
             self.ZGREP if self.is_compressed else self.GREP,
             self.input_vcf,
