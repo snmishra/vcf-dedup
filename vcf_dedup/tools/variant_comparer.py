@@ -9,7 +9,7 @@ class AbstractVariantComparer(object, metaclass=ABCMeta):
 
 
 class VariantComparerNoAlternate(AbstractVariantComparer):
-    def equals(self, variant1, variant2):
+    def equals(self, variant1: _Record, variant2):
         """
 
         :type variant1: _Record

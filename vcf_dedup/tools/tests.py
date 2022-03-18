@@ -1,12 +1,21 @@
 import unittest
-from vcf_dedup.tools.vcf_transformer import StrelkaVcfDedupper, StarlingVcfDedupper, \
-    DuplicationFinder, VcfFormatError, GenericVcfDedupper
-from vcf_dedup.tools.variant_comparer import VariantComparerNoAlternate, VariantComparerWithAlternate
+from vcf_dedup.tools.vcf_transformer import (
+    StrelkaVcfDedupper,
+    StarlingVcfDedupper,
+    DuplicationFinder,
+    VcfFormatError,
+    GenericVcfDedupper,
+)
+from vcf_dedup.tools.variant_comparer import (
+    VariantComparerNoAlternate,
+    VariantComparerWithAlternate,
+)
 from vcf_dedup.tools.vcf_sorter import VcfSorter
-from vcf_dedup.constants import *
+from vcf_dedup import constants
 import logging
 import os
 import sys
+
 
 class VcfDedupTests2(unittest.TestCase):
 
@@ -15,23 +24,36 @@ class VcfDedupTests2(unittest.TestCase):
 
     def setUp(self):
         logging.basicConfig(level=logging.DEBUG)
-        self.starling_vcf = os.path.join(self.INPUT_FOLDER, "starling_duplicated_variants.vcf")
-        self.strelka_vcf = os.path.join(self.INPUT_FOLDER, "strelka_duplicated_variants.vcf")
+        self.starling_vcf = os.path.join(
+            self.INPUT_FOLDER, "starling_duplicated_variants.vcf"
+        )
+        self.strelka_vcf = os.path.join(
+            self.INPUT_FOLDER, "strelka_duplicated_variants.vcf"
+        )
         self.unsorted_vcf = os.path.join(self.INPUT_FOLDER, "duplicated_unsorted.vcf")
-        self.platypus_vcf = os.path.join(self.INPUT_FOLDER, "platypus_duplicated_variants.vcf")
+        self.platypus_vcf = os.path.join(
+            self.INPUT_FOLDER, "platypus_duplicated_variants.vcf"
+        )
         self.generic1 = os.path.join(self.INPUT_FOLDER, "duplicates.chr11.no_head.vcf")
         self.generic2 = os.path.join(self.INPUT_FOLDER, "uk10k.dup.no_head.vcf")
 
     #####
-    ## Strelka VCF dedupper
+    # Strelka VCF dedupper
     #####
     def test1_0(self):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_AF, 1)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_AF,
+            1,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -39,9 +61,17 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_AF, 1, "tumor")
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_AF,
+            1,
+            "tumor",
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -49,9 +79,17 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_AF, 1, "none")
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_AF,
+            1,
+            "none",
+        )
         try:
             vcf_transformer.process_vcf()
             self.assertTrue(False)
@@ -61,11 +99,13 @@ class VcfDedupTests2(unittest.TestCase):
 
     def test1_0_2(self):
         input_vcf = self.strelka_vcf
-        class_name = type(self).__name__
-        test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, None, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_AF, 1)
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            None,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_AF,
+            1,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -73,9 +113,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                             SELECTION_METHOD_AF, 1)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_AF,
+            1,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -83,9 +130,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                             SELECTION_METHOD_QUALITY, 1)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_QUALITY,
+            1,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -93,9 +147,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_QUALITY, 1)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_QUALITY,
+            1,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -103,9 +164,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                             SELECTION_METHOD_ARBITRARY, 1)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_ARBITRARY,
+            1,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -113,23 +181,36 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StrelkaVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_ARBITRARY, 1)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StrelkaVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_ARBITRARY,
+            1,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
     #####
-    ## Starling VCF dedupper
+    # Starling VCF dedupper
     #####
     def test2_0(self):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StarlingVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                              SELECTION_METHOD_AF,
-                                              sample_idx=0)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StarlingVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_AF,
+            sample_idx=0,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -137,10 +218,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StarlingVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                              SELECTION_METHOD_AF,
-                                              sample_idx=0)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StarlingVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_AF,
+            sample_idx=0,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -148,10 +235,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StarlingVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                              SELECTION_METHOD_QUALITY,
-                                              sample_idx=0)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StarlingVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_QUALITY,
+            sample_idx=0,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -159,10 +252,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StarlingVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                              SELECTION_METHOD_QUALITY,
-                                              sample_idx=0)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StarlingVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_QUALITY,
+            sample_idx=0,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -170,10 +269,16 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StarlingVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                              SELECTION_METHOD_ARBITRARY,
-                                              sample_idx=0)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StarlingVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_ARBITRARY,
+            sample_idx=0,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -181,22 +286,35 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = StarlingVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                              SELECTION_METHOD_ARBITRARY,
-                                              sample_idx=0)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = StarlingVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_ARBITRARY,
+            sample_idx=0,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
     #####
-    ## Generic VCF dedupper
+    # Generic VCF dedupper
     #####
     def test5_0(self):
         input_vcf = self.generic1
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = GenericVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(), SELECTION_METHOD_AF)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = GenericVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_AF,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -204,8 +322,15 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.generic1
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = GenericVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(), SELECTION_METHOD_AF)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = GenericVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_AF,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -213,9 +338,15 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.generic1
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = GenericVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_QUALITY)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = GenericVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_QUALITY,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -223,9 +354,15 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.generic1
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = GenericVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                             SELECTION_METHOD_QUALITY)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = GenericVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_QUALITY,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -233,9 +370,15 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.generic1
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = GenericVcfDedupper(input_vcf, output_vcf, VariantComparerWithAlternate(),
-                                             SELECTION_METHOD_ARBITRARY)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = GenericVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerWithAlternate(),
+            constants.SELECTION_METHOD_ARBITRARY,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
@@ -243,33 +386,44 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.generic1
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = GenericVcfDedupper(input_vcf, output_vcf, VariantComparerNoAlternate(),
-                                             SELECTION_METHOD_ARBITRARY)
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = GenericVcfDedupper(
+            input_vcf,
+            output_vcf,
+            VariantComparerNoAlternate(),
+            constants.SELECTION_METHOD_ARBITRARY,
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
     #####
-    ## Duplicate finder
+    # Duplicate finder
     #####
     def test3_0(self):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
-        vcf_transformer = DuplicationFinder(input_vcf, output_vcf, VariantComparerWithAlternate())
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
+        vcf_transformer = DuplicationFinder(
+            input_vcf, output_vcf, VariantComparerWithAlternate()
+        )
         vcf_transformer.process_vcf()
         del vcf_transformer
 
-
     #####
-    ##
+    #
     #####
     def test4_0(self):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
         vcf_sorter = VcfSorter(input_vcf, output_vcf)
         vcf_sorter.sort()
         del vcf_sorter
@@ -278,7 +432,9 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
         vcf_sorter = VcfSorter(input_vcf, output_vcf, threads=8)
         vcf_sorter.sort()
         del vcf_sorter
@@ -287,7 +443,9 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.strelka_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
         vcf_sorter = VcfSorter(input_vcf, output_vcf, temp_folder="../resources/tmp")
         vcf_sorter.sort()
         del vcf_sorter
@@ -296,7 +454,9 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
         vcf_sorter = VcfSorter(input_vcf, output_vcf)
         vcf_sorter.sort()
         del vcf_sorter
@@ -305,7 +465,9 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
         vcf_sorter = VcfSorter(input_vcf, output_vcf, threads=8)
         vcf_sorter.sort()
         del vcf_sorter
@@ -314,7 +476,9 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.starling_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
         vcf_sorter = VcfSorter(input_vcf, output_vcf, temp_folder="../resources/tmp")
         vcf_sorter.sort()
         del vcf_sorter
@@ -323,7 +487,9 @@ class VcfDedupTests2(unittest.TestCase):
         input_vcf = self.unsorted_vcf
         class_name = type(self).__name__
         test_name = sys._getframe().f_code.co_name
-        output_vcf = os.path.join(self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name))
+        output_vcf = os.path.join(
+            self.OUTPUT_FOLDER, "%s.%s.vcf" % (class_name, test_name)
+        )
         vcf_sorter = VcfSorter(input_vcf, output_vcf)
         vcf_sorter.sort()
         del vcf_sorter
